@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>cult77</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,500;0,700;1,900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --red: #ff3b30;
+      --text: #f5f5f7;
+      --glass: rgba(10, 10, 12, 0.4);
+      --border: rgba(255, 255, 255, 0.08);
+      --ease: 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #000;
+      color: var(--text);
+      font-family: "Inter", sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* ФОНОВОЕ ВИДЕО */
+    .bg-video-container {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+    }
+
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.4); /* Затемнение, чтобы текст читался */
+    }
+
+    .grain-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px);
+      background-size: 4px 4px;
+      opacity: 0.2;
+      pointer-events: none;
+    }
+
+    /* ЭКРАН ВХОДА */
+    .enter-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      cursor: pointer;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    .enter-screen.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .enter-text {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; text-shadow: 0 0 15px rgba(255,255,255,0.3); }
+    }
+
+    /* ОСНОВНОЙ КОНТЕНТ */
+    .main-content {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 40px;
+      opacity: 0;
+      transform: scale(0.95);
+      transition: opacity 0.8s ease 0.2s, transform 0.8s ease 0.2s;
+      width: 100%;
+      max-width: 800px;
+      padding: 20px;
+    }
+
+    .main-content.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* НИКНЕЙМ */
+    .nickname {
+      font-size: clamp(80px, 12vw, 180px);
+      font-weight: 900;
+      font-style: italic;
+      line-height: 0.8;
+      letter-spacing: -0.06em;
+      text-transform: lowercase;
+      transform: skew(-5deg);
+      text-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+
+    .nickname .cult { color: #fff; }
+    .nickname .num { color: var(--red); text-shadow: 0 0 30px rgba(255,59,48,0.4); }
+
+    /* КНОПКИ СОЦСЕТЕЙ */
+    .links-row {
+      display: flex;
+      gap: 20px;
+    }
+
+    .link-btn {
+      width: 60px;
+      height: 60px;
+      border-radius: 16px;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      color: #fff;
+      text-decoration: none;
+      transition: all var(--ease);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    .link-btn .faceit-f {
+      font-family: system-ui;
+      font-weight: 900;
+      font-size: 20px;
+    }
+
+    .link-btn:hover {
+      transform: translateY(-5px);
+      border-color: var(--red);
+      background: rgba(255,59,48,0.1);
+      color: var(--red);
+      box-shadow: 0 15px 40px rgba(255,59,48,0.2);
+    }
+
+    /* ТРОФЕИ */
+    .trophies-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .trophy-item {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      border-radius: 16px;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      transition: border-color var(--ease), transform var(--ease);
+    }
+
+    .trophy-item:hover {
+      border-color: rgba(255,255,255,0.2);
+      transform: scale(1.02);
+    }
+
+    .trophy-icon {
+      font-size: 24px;
+      color: var(--red);
+    }
+
+    .trophy-text {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .trophy-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .trophy-sub {
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.4);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    @media (max-width: 600px) {
+      .links-row { gap: 12px; }
+      .link-btn { width: 50px; height: 50px; font-size: 20px; }
+      .trophy-item { padding: 12px 16px; gap: 16px; }
+      .trophy-title { font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-video-container">
+    <video id="bg-video" loop playsinline preload="auto">
+      <source src="bg.mp4" type="video/mp4" />
+    </video>
+  </div>
+  <div class="grain-overlay"></div>
+
+  <div class="enter-screen" id="enterScreen">
+    <div class="enter-text">click to enter</div>
+  </div>
+
+  <main class="main-content" id="mainContent">
+    
+    <div class="nickname">
+      <span class="cult">cult</span><span class="num">77</span>
+    </div>
+
+    <div class="links-row">
+      <a href="https://steamcommunity.com/id/cult77/" target="_blank" class="link-btn"><i class="fa-brands fa-steam"></i></a>
+      <a href="https://discord.com/users/@espilx" target="_blank" class="link-btn"><i class="fa-brands fa-discord"></i></a>
+      <a href="https://open.spotify.com/artist/2HhYxMJQRkeObZhiWGfQKr" target="_blank" class="link-btn"><i class="fa-brands fa-spotify"></i></a>
+      <a href="https://www.faceit.com/ru/players/nerbuf-" target="_blank" class="link-btn"><span class="faceit-f">F</span></a>
+    </div>
+
+    <div class="trophies-list">
+      <div class="trophy-item">
+        <i class="fa-solid fa-medal trophy-icon"></i>
+        <div class="trophy-text">
+          <div class="trophy-title">PRIDECS2 1st Online Event 2025</div>
+          <div class="trophy-sub">HawiVGR ★ 2nd Place</div>
+        </div>
+      </div>
+
+      <div class="trophy-item">
+        <i class="fa-solid fa-award trophy-icon"></i>
+        <div class="trophy-text">
+          <div class="trophy-title">PRIDECS2 2025 Virtual LAN</div>
+          <div class="trophy-sub">HawiVGR ★ Top 4</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    const enterScreen = document.getElementById("enterScreen");
+    const mainContent = document.getElementById("mainContent");
+    const video = document.getElementById("bg-video");
+    let isEntered = false;
+
+    enterScreen.addEventListener("click", () => {
+      if (isEntered) return;
+      isEntered = true;
+
+      // Скрываем экран входа
+      enterScreen.classList.add("hidden");
+      
+      // Включаем звук и запускаем видео
+      video.muted = false;
+      video.volume = 0.8;
+      video.play().catch(e => {
+        // Заглушка, если браузер жестко блочит
+        video.muted = true;
+        video.play();
+      });
+
+      // Показываем контент
+      setTimeout(() => {
+        mainContent.classList.add("visible");
+      }, 100);
+    });
+  </script>
+</body>
+</html>
